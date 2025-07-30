@@ -1,0 +1,145 @@
+.App {
+  font-family: sans-serif;
+  /* text-align: center; */
+}
+
+.user-pic {
+  height: 200px;
+  aspect-ratio: 1 / 1;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.user-name-container {
+  font-size: 24px;
+
+  span {
+    font-weight: bold;
+    font-style: italic;
+  }
+}
+
+.user-list-container {
+  display: grid;
+  gap: 48px;
+}
+
+.counter-container {
+  /* display: flex; */
+
+  button {
+    font-size: 18px;
+    margin-right: 10px;
+  }
+}
+
+.color-form-container {
+  display: flex;
+}
+
+.color-box-list-container {
+  margin-top: 16px;
+
+  display: grid;
+  gap: 16px;
+}
+
+.movie-container {
+  width: 340px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.movie-poster {
+  height: 640px;
+  width: 100%;
+  object-fit: cover;
+  border-radius: 6px;
+}
+
+.movie-specs {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 1rem;
+}
+
+.movie-name {
+  font-size: 24px;
+  margin: 0;
+}
+
+.movie-rating {
+  font-size: 20px;
+  margin-top: 0;
+}
+
+.movie-summary {
+  margin-top: 10px;
+  font-size: 16px;
+  line-height: 1.5;
+}
+
+.movie-content-container {
+  padding: 16px;
+}
+
+/* .movie-list-container {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-around;
+  gap: 32px;
+  align-items: flex-start;
+} */
+
+.movie-form-container {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+
+  max-width: 500px;
+  margin: 0 auto;
+
+  margin-bottom: 32px;
+}
+
+nav {
+  ul {
+    display: flex;
+    list-style: none;
+    gap: 24px;
+    padding: 0;
+  }
+}
+
+.movie-details-content-container {
+  max-width: 600px;
+}
+
+.navbar {
+  background-color: #faf9f7 !important;
+  color: black !important;
+  position: fixed !important;
+}
+
+.nav-button {
+  color: white;
+  margin-left: 10px;
+  font-size: 20px !important;
+}
+
+.main_heading {
+  width: 2000px;
+  text-align: center;
+  color: black;
+}
+.green-words {
+  color: #2e7d32;
+}
+.search-form-container {
+  display: flex;
+  margin: 8px 0px;
+  width: 700px;
+}
