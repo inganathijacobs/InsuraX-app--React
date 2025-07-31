@@ -1,59 +1,113 @@
-import { useState } from "react";
-import InfoIcon from '@mui/icons-material/Info';
-import Button from '@mui/material/Button';
-import { Link, useNavigate } from "react-router";
-// import IconButton from "@mui/material/IconButton";
-import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
-import ExpandLessIcon from "@mui/icons-material/ExpandLess";
-// import Tooltip from "@mui/material/Tooltip";
-import { Card, CardMedia, CardContent, Typography, Box } from "@mui/material";
+import { Button, Card, CardMedia, CardContent, Typography, Box, Chip, Stack } from "@mui/material";
+import { useNavigate } from "react-router";
+import CheckCircleIcon from '@mui/icons-material/CheckCircle';
+import LocalGasStationIcon from '@mui/icons-material/LocalGasStation';
+import DirectionsCarIcon from '@mui/icons-material/DirectionsCar';
 
+export function Vehicle({ vehicle, quotes, deleteBtn, editBtn }) {
+    const navigate = useNavigate();
 
-// Presentation
-export function Vehicle({ vehicle, deleteBtn,editBtn }) {
+   //find quote for each vehicle (if it already exists)
+    const vehicleQuote = quotes?.find(q => q.vehicleId === vehicle.id.toString());
+
     return (
-      <Card
-        sx={{
-            width: 280,
-            maxWidth: 300,
-            height:400,
-          borderRadius: 4,
-        }}
-      >
-        <CardMedia
-          component="img"
-          height="200"
-          image={vehicle.image}
-          alt={`${vehicle.make} ${vehicle.model}`}
-        />
+        <Card sx={{
+            width: 365,
+            maxWidth: 400,
+            height: 'auto',
+            borderRadius: 4,
+            boxShadow: 3,
+        }}>
+            <CardMedia
+                component="img"
+                height="300"
+                image={vehicle.image}
+                alt={`${vehicle.make} ${vehicle.model}`}
 
-        <CardContent>
-          <Typography variant="h6" fontWeight="bold" gutterBottom>
-            {vehicle.make} {vehicle.model} ({vehicle.year})
-          </Typography>
+            />
 
-          <Box>
-            <Typography variant="body2" color="text.secondary">
-              Reg No: {vehicle.registration_no}
-            </Typography>
-            <Typography variant="body2" color="text.secondary">
-              KMs: {vehicle.kms}
-            </Typography>
-          </Box>
-          {editBtn}{deleteBtn}
-          <Button
-            variant="contained"
-            sx={{
-                marginTop:4,
-                marginLeft:8,
-              backgroundColor: "#2e7d32",
-              textTransform: "none",
-            }}
-            onClick={() => navigate(`/quotes`)}
-          >
-           Get Quote
-          </Button>
-        </CardContent>
-      </Card>
+            <CardContent sx={{ p: 2.5 }}>
+                <Typography
+                    variant="h6"
+                    fontWeight="bold"
+                    gutterBottom
+                >
+                    {vehicle.make} {vehicle.model} ({vehicle.year})
+                </Typography>
+
+                <Stack spacing={1} mb={2}>
+                    <Box display="flex" alignItems="center">
+                        <DirectionsCarIcon
+                            fontSize="small"
+                            color="action"
+                            sx={{ mr: 1 }}
+                        />
+                        <Typography variant="body2" color="text.secondary">
+                            <strong>Reg No:</strong> {vehicle.registration_no}
+                        </Typography>
+                    </Box>
+
+                    <Box display="flex" alignItems="center">
+                        <LocalGasStationIcon
+                            fontSize="small"
+                            color="action"
+                            sx={{ mr: 1 }}
+                        />
+                        <Typography variant="body2" color="text.secondary">
+                            <strong>KMs:</strong> {vehicle.kms.toLocaleString()}
+                        </Typography>
+                    </Box>
+                </Stack>
+
+                {/* Insurance status */}
+                {vehicleQuote ? (
+                    <Chip
+                        icon={<CheckCircleIcon fontSize="small" />}
+                        label={`Insured with ${vehicleQuote.insuranceName} for R${vehicleQuote.quote} p.m`}
+                        color="success"
+                        variant="outlined"
+                        sx={{
+                            mb: 2,
+                            px: 1,
+                            py: 1.5,
+                            borderRadius: 1,
+                        }}
+                    />
+                ) : (
+                    <Chip
+                        label="No active insurance"
+                        color="default"
+                        variant="outlined"
+                        sx={{
+                            mb: 2,
+                            px: 1,
+                            py: 1.5,
+                            borderRadius: 1,
+                            borderStyle: 'dashed'
+                        }}
+                    />
+                )}
+
+                <Box display="flex" justifyContent="space-between" mt={2}>
+                    <Box>
+                        {editBtn}
+                        {deleteBtn}
+                    </Box>
+                    <Button
+                        variant="contained"
+                        size="small"
+                        sx={{
+                            backgroundColor: "#2e7d32",
+                            textTransform: "none",
+                            fontWeight: 'bold',
+                            px: 3,
+                        }}
+                        onClick={() => navigate(`/quotes/${vehicle.id}`)}
+                    >
+                        {vehicleQuote ? "Change Quote" : "Get Quote"}
+                    </Button>
+                </Box>
+            </CardContent>
+        </Card>
     );
-  }
+}

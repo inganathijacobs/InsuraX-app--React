@@ -1,115 +1,180 @@
-import { useState } from "react";
 import { useNavigate } from "react-router";
 import Button from "@mui/material/Button";
 import AddIcon from "@mui/icons-material/Add";
 import TextField from "@mui/material/TextField";
+import { useFormik } from "formik";
+import { object, string, number } from "yup";
+import { Box, Typography } from "@mui/material";
 
-// /movies/new - AddMovie
 export function AddVehicle() {
-  // input box - variable
-  const [make, setMake] = useState("");
-  const [model, setModel] = useState("");
-  const [year, setYear] = useState("");
-  const [registration_no, setRegistration] = useState("");
-  const [kms, setKms] = useState("");
   const navigate = useNavigate();
 
-  const addVehicle = async (event) => {
-    event.preventDefault(); // Prevent Refesh Behaviour
-      // Get the image URL
-  const imageUrl = await getCarImage(make, model);
+  const vehicleSchema = object({
+    make: string().required("Enter car make."),
+    model: string().required("Enter car model."),
+    year: number()
+      .required("Enter car year.")
+      .min(1900, "Enter a valid year (after 1900).")
+      .max(new Date().getFullYear(), "Year cannot be in the future"),
+    registration_no: string()
+      .required("Enter car registration number.")
+      .min(8, "Registration number must be at least 8 characters.")
+      .max(10, "Cannot exceed 10 characters"),
+    kms: number()
+      .required("Enter current kms.")
+      .min(1, "Kms must be greater than 0."),
+    value: number()
+      .required("Enter current value of car.")
+      .min(1, "Value must be greater than R0."),
+  });
 
+  const { handleSubmit, handleChange, handleBlur, values, errors, touched } = useFormik({
+    initialValues: {
+      make: "",
+      model: "",
+      year: "",
+      registration_no: "",
+      kms: "",
+      value: ""
+    },
+    validationSchema: vehicleSchema,
+    onSubmit: async (values) => {
+      try {
+        const imageUrl = await getCarImage(values.make, values.model);
 
-    // setColors([...colors, color]);
-    console.log("addVehicle", make, model);
+        const newVehicle = {
+          make: values.make,
+          model: values.model,
+          year: Number(values.year),
+          registration_no: values.registration_no,
+          kms: Number(values.kms),
+          value: Number(values.value),
+          image: imageUrl || "default-car.jpg"
+        };
 
-    // Object Short hand
-    const newVehicle = {
-      make,
-      model,
-      year,
-      registration_no,
-      kms,
-      image:imageUrl,
-    };
+        const response = await fetch(
+          "https://68871b7e071f195ca97f4606.mockapi.io/vehicles",
+          {
+            method: "POST",
+            body: JSON.stringify(newVehicle),
+            headers: {
+              "Content-type": "application/json",
+            },
+          }
+        );
 
+        if (response.ok) {
+          navigate("/dashboard");
+        }
+      } catch (error) {
+        console.error("Error adding vehicle:", error);
+      }
+    },
+  });
 
-
-    async function getCarImage(make, model) {
+  async function getCarImage(make, model) {
+    try {
       const accessKey = "lDxM5Q3A5zXVCkRB5xL7E6iz9s5GMyWeloMp-Ks3ses";
-      const query = `${make} ${model} car`;
-      const url = `https://api.unsplash.com/search/photos?query=${encodeURIComponent(query)}&client_id=${accessKey}&per_page=1`;
-
-      const response = await fetch(url);
+      const response = await fetch(
+        `https://api.unsplash.com/search/photos?query=${make}+${model}+car&client_id=${accessKey}&per_page=1`
+      );
       const data = await response.json();
-
-      if (data.results && data.results.length > 0) {
-        return data.results[0].urls.small; // or 'regular' for bigger image
-      }
-      return null; // fallback in case no image found
+      return data.results?.[0]?.urls?.small;
+    } catch (error) {
+      console.error("Error fetching car image:", error);
+      return null;
     }
-
-
-
-
-
-    // // Copy the existing movies + New movie
-    // setMovies([...movies, newMovie]);
-    // API Call
-
-    // POST
-    // 1. method - POST
-    // 2. Body - data (JSON)
-    // 3. Header - JSON - (Inform to the backend JSON data)
-
-    const response = await fetch(
-      "https://68871b7e071f195ca97f4606.mockapi.io/vehicles",
-      {
-        method: "POST",
-        body: JSON.stringify(newVehicle),
-        headers: {
-          "Content-type": "application/json",
-        },
-      }
-    );
-
-    // Programmatically
-    navigate("/dashboard"); // +1 -> go forward, -1 -> go back
-  };
+  }
 
   return (
-    <form onSubmit={addVehicle} className="vehicle-form-container">
-      <TextField
-        onChange={(event) => setMake(event.target.value)}
-        label="Make"
-        variant="outlined"
-      />
-      <TextField
-        onChange={(event) => setModel(event.target.value)}
-        label="Model"
-        variant="outlined"
-      />
-      <TextField
-        onChange={(event) => setYear(event.target.value)}
-        label="Year"
-        variant="outlined"
-      />
-      <TextField
-        onChange={(event) => setRegistration(event.target.value)}
-        label="Registration Number"
-        variant="outlined"
-      />
-      <TextField
-        onChange={(event) => setKms(event.target.value)}
-        label="Currents kms"
-        variant="outlined"
-      />
+    <Box sx={{ maxWidth: 500, mx: "auto", p: 3 }}>
+     <Typography variant="h4" sx={{  color: '#2e7d32', textAlign:'center', mt:-4, mb:2,}}>Vehicle Form</Typography>
+      <form onSubmit={handleSubmit}>
+        <TextField
+          name="make"
+          label="Make"
+          value={values.make}
+          onChange={handleChange}
+          onBlur={handleBlur}
+          error={touched.make && Boolean(errors.make)}
+          helperText={touched.make && errors.make}
+          fullWidth
+          margin="normal"
+        />
 
-      {/* Integrated Third party package - MUI */}
-      {/* Task 3.1 - Convert to Add to Material button */}
-      <Button type="submit" variant="contained" startIcon={<AddIcon />}>
-        Add
-      </Button>
-    </form>
+        <TextField
+          name="model"
+          label="Model"
+          value={values.model}
+          onChange={handleChange}
+          onBlur={handleBlur}
+          error={touched.model && Boolean(errors.model)}
+          helperText={touched.model && errors.model}
+          fullWidth
+          margin="normal"
+        />
+
+        <TextField
+          name="year"
+          label="Year"
+          type="number"
+          value={values.year}
+          onChange={handleChange}
+          onBlur={handleBlur}
+          error={touched.year && Boolean(errors.year)}
+          helperText={touched.year && errors.year}
+          fullWidth
+          margin="normal"
+        />
+
+        <TextField
+          name="registration_no"
+          label="Registration Number"
+          value={values.registration_no}
+          onChange={handleChange}
+          onBlur={handleBlur}
+          error={touched.registration_no && Boolean(errors.registration_no)}
+          helperText={touched.registration_no && errors.registration_no}
+          fullWidth
+          margin="normal"
+        />
+
+        <TextField
+          name="kms"
+          label="Kilometers"
+          type="number"
+          value={values.kms}
+          onChange={handleChange}
+          onBlur={handleBlur}
+          error={touched.kms && Boolean(errors.kms)}
+          helperText={touched.kms && errors.kms}
+          fullWidth
+          margin="normal"
+        />
+
+        <TextField
+          name="value"
+          label="Value (R)"
+          type="number"
+          value={values.value}
+          onChange={handleChange}
+          onBlur={handleBlur}
+          error={touched.value && Boolean(errors.value)}
+          helperText={touched.value && errors.value}
+          fullWidth
+          margin="normal"
+        />
+
+        <Button
+          type="submit"
+          variant="contained"
+          startIcon={<AddIcon />}
+          sx={{ mt: 3, backgroundColor: '#2e7d32' }}
+          fullWidth
+        >
+          Add Vehicle
+        </Button>
+      </form>
+    </Box>
   );
 }

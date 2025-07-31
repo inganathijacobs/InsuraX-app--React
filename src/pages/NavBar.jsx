@@ -1,47 +1,98 @@
+import { Link } from "react-router";
+import { AppBar, Toolbar, Button, IconButton,Box } from "@mui/material";
+import { LightMode, DarkMode } from "@mui/icons-material";
 
-import { Link, Navigate, Route, Routes } from "react-router";
-import React from 'react';
-import AppBar from '@mui/material/AppBar';
-import Toolbar from '@mui/material/Toolbar';
-import IconButton from '@mui/material/IconButton';
-import MenuIcon from '@mui/icons-material/Menu';
-import Typography from '@mui/material/Typography';
-import Button from '@mui/material/Button';
-import Box from '@mui/material/Box';
-
-
-const Navbar = () => {
+const Navbar = ({ theme, toggleTheme }) => {
   return (
-    <AppBar position="fixed" className="navbar">
-      <Toolbar>
-        {/* Menu icon (for mobile) */}
+    <AppBar
+      position="static"
+      elevation={0}
+      sx={{
+        backgroundColor: theme === 'light' ? '#FAF9F7' : 'primary.dark',
+        color: theme === 'light' ? 'text.primary' : 'text.secondary',
+        boxShadow: '0 2px 4px rgba(0,0,0,0.1)'
+
+      }}
+    >
+      <Toolbar sx={{ justifyContent: 'space-between' }}>
+        {/* Logo Section */}
+        <Box sx={{ display: 'flex', alignItems: 'center' }}>
+          <img
+            src="/logo.png"
+            alt="Logo"
+            style={{
+              height: 150,
+              width: 200,
+              marginTop: 16,
+              filter: theme === 'dark' ? 'invert(1)' : 'none'
+            }}
+          />
+        </Box>
+        <Box sx={{ display: 'flex', gap: 3 }}>
+          <Button
+            component={Link}
+            to="/"
+            sx={{
+              color: 'inherit',
+              textTransform: 'none',
+              fontSize: '1.75rem'
+            }}
+          >
+            Home
+          </Button>
+          <Button
+            component={Link}
+            to="/dashboard"
+            sx={{
+              color: 'inherit',
+              textTransform: 'none',
+              fontSize: '1.75rem'
+            }}
+          >
+            Dashboard
+          </Button>
+          <Button
+            sx={{
+              color: 'inherit',
+              textTransform: 'none',
+              fontSize: '1.75rem'
+            }}
+          >
+            Contact
+          </Button>
+        </Box>
 
 
-        {/* Logo / Brand Name */}
-        <Box
-          component="img"
-          src="/logo.png" // ✅ if it's in public folder
-          alt="Logo"
-          sx={{
-            height: 120,
-            width: 150,
-            marginRight: 12,
-          }}
-        />
-        {/* Nav links (hidden on mobile) */}
-        <Box sx={{display:'flex', gap:12,}}>
-          <Button color="inherit" className="nav-button" > <Link to="/"  style={{ color: 'black', textDecoration: 'none' }}>Home</Link></Button>
-          <Button color="inherit" className="nav-button"> <Link to="dashboard"  style={{ color: 'black', textDecoration: 'none' }}>Dashboard</Link></Button>
-          <Button color="inherit" className="nav-button">Contact</Button>
-          <Button  sx={{
-            borderColor:'#2e7d32',
-            color:'black',
-            fontSize:'20px',
-          }} variant="outlined">Login</Button>
-          <Button  sx={{
-            backgroundColor:'#2e7d32',fontSize:'20px',
-          }} variant="contained">Sign Up</Button>
+        <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+          <Button
+            variant="outlined"
+            sx={{
+              color: 'inherit',
+              borderColor: '#2e7d32',
+              textTransform: 'none',
+              fontSize: '1.25rem'
+            }}
+          >
+            Login
+          </Button>
+          <Button
+            variant="contained"
+            sx={{
+              backgroundColor: '#2e7d32',
+              color: '#fff',
+              textTransform: 'none',
+              fontSize: '1.25rem',
 
+            }}
+          >
+            Sign Up
+          </Button>
+          <IconButton
+            onClick={toggleTheme}
+            sx={{ color: 'inherit' }}
+          >
+            {theme === "light" ? <DarkMode /> : <LightMode />}
+          </IconButton>
         </Box>
       </Toolbar>
     </AppBar>
